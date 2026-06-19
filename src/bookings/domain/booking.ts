@@ -1,4 +1,3 @@
-
 import { Status } from '../../statuses/domain/status';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -39,7 +38,6 @@ export class Booking {
     type: String,
   })
   notes: string;
-
 
   @ApiProperty()
   startAt: Date;

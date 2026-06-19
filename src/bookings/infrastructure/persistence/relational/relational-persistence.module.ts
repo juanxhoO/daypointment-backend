@@ -14,4 +14,4 @@ import { UserEntity } from './entities/booking.entity';
   ],
   exports: [UserRepository],
 })
-export class RelationalUserPersistenceModule { }
+export class RelationalUserPersistenceModule {}
