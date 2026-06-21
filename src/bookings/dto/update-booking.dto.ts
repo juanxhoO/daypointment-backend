@@ -1,48 +1,71 @@
 import { PartialType, ApiPropertyOptional } from '@nestjs/swagger';
-import { CreateUserDto } from './create-booking.dto';
+import { CreateBookingDto } from './create-booking.dto';
+import { IsOptional } from 'class-validator';
+import { BookingStatusDto } from './status.dto';
 
-import { Transform, Type } from 'class-transformer';
-import { IsEmail, IsOptional, MinLength } from 'class-validator';
-import { FileDto } from '../../files/dto/file.dto';
-import { RoleDto } from '../../roles/dto/role.dto';
-import { StatusDto } from '../../statuses/dto/status.dto';
-import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
-
-export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @ApiPropertyOptional({ example: 'test1@example.com', type: String })
-  @Transform(lowerCaseTransformer)
+export class UpdateBookingDto extends PartialType(CreateBookingDto) {
+  @ApiPropertyOptional({
+    example: 'America/Argentina/Buenos_Aires',
+    type: String,
+  })
   @IsOptional()
-  @IsEmail()
-  email?: string | null;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @MinLength(6)
-  password?: string;
-
-  provider?: string;
-
-  socialId?: string | null;
+  timezone: string | null;
 
   @ApiPropertyOptional({ example: 'John', type: String })
   @IsOptional()
-  firstName?: string | null;
+  locationtype: string | null;
 
-  @ApiPropertyOptional({ example: 'Doe', type: String })
+  @ApiPropertyOptional({ example: 'John', type: String })
   @IsOptional()
-  lastName?: string | null;
+  locationValue: string | null;
 
-  @ApiPropertyOptional({ type: () => FileDto })
+  @ApiPropertyOptional({
+    example: 1,
+  })
   @IsOptional()
-  photo?: FileDto | null;
+  organizerId: string;
 
-  @ApiPropertyOptional({ type: () => RoleDto })
-  @IsOptional()
-  @Type(() => RoleDto)
-  role?: RoleDto | null;
+  @ApiPropertyOptional({
+    example: [
+      {
+        id: 1,
+        name: 'John',
+        email: '[EMAIL_ADDRESS]',
+      },
+    ],
+  })
+  attendants: {
+    id: number | string;
+    name: string;
+    email: string;
+    [key: string]: any;
+  }[];
 
-  @ApiPropertyOptional({ type: () => StatusDto })
+  @ApiPropertyOptional({
+    type: String,
+    example: 'notes',
+  })
   @IsOptional()
-  @Type(() => StatusDto)
-  status?: StatusDto;
+  notes: string | null;
+
+  @ApiPropertyOptional({
+    type: Date,
+  })
+  @IsOptional()
+  startAt: Date;
+
+  @ApiPropertyOptional({
+    example: {
+      id: 1,
+      name: 'Pending',
+    },
+  })
+  @IsOptional()
+  status: BookingStatusDto;
+
+  @ApiPropertyOptional({
+    type: Date,
+  })
+  @IsOptional()
+  endAt: Date;
 }

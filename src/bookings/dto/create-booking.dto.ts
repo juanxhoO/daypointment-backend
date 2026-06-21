@@ -1,55 +1,67 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   // decorators here
-  Transform,
-  Type,
-} from 'class-transformer';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  // decorators here
-  IsEmail,
   IsNotEmpty,
   IsOptional,
-  MinLength,
 } from 'class-validator';
-import { FileDto } from '../../files/dto/file.dto';
-import { RoleDto } from '../../roles/dto/role.dto';
-import { StatusDto } from '../../statuses/dto/status.dto';
-import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
+import { BookingStatusDto } from './status.dto';
 
-export class CreateUserDto {
-  @ApiProperty({ example: 'test1@example.com', type: String })
-  @Transform(lowerCaseTransformer)
+export class CreateBookingDto {
+  @ApiProperty({ example: 'America/Argentina/Buenos_Aires', type: String })
   @IsNotEmpty()
-  @IsEmail()
-  email: string | null;
-
-  @ApiProperty()
-  @MinLength(6)
-  password?: string;
-
-  provider?: string;
-
-  socialId?: string | null;
+  timezone: string | null;
 
   @ApiProperty({ example: 'John', type: String })
   @IsNotEmpty()
-  firstName: string | null;
+  locationtype: string | null;
 
-  @ApiProperty({ example: 'Doe', type: String })
+  @ApiProperty({ example: 'John', type: String })
   @IsNotEmpty()
-  lastName: string | null;
+  locationValue: string | null;
 
-  @ApiPropertyOptional({ type: () => FileDto })
-  @IsOptional()
-  photo?: FileDto | null;
+  @ApiProperty({
+    example: 1,
+  })
+  organizerId: string;
 
-  @ApiPropertyOptional({ type: RoleDto })
-  @IsOptional()
-  @Type(() => RoleDto)
-  role?: RoleDto | null;
+  @ApiProperty({
+    example: [
+      {
+        id: 1,
+        name: 'John',
+        email: '[EMAIL_ADDRESS]',
+      },
+    ],
+  })
+  attendants: {
+    id: number | string;
+    name: string;
+    email: string;
+    [key: string]: any;
+  }[];
 
-  @ApiPropertyOptional({ type: StatusDto })
+  @ApiProperty({
+    type: String,
+    example: 'notes',
+  })
   @IsOptional()
-  @Type(() => StatusDto)
-  status?: StatusDto;
+  notes: string | null;
+
+  @ApiProperty({
+    type: Date,
+  })
+  startAt: Date;
+
+  @ApiProperty({
+    example: {
+      id: 1,
+      name: 'Pending',
+    },
+  })
+  status: BookingStatusDto;
+
+  @ApiProperty({
+    type: Date,
+  })
+  endAt: Date;
 }

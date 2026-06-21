@@ -2,46 +2,43 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FindOptionsWhere, Repository, In } from 'typeorm';
-import { UserEntity } from '../entities/booking.entity';
+import { BookingEntity } from '../entities/booking.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
-import { FilterUserDto, SortUserDto } from '../../../../dto/query-booking.dto';
-import { User } from '../../../../domain/booking';
-import { UserRepository } from '../../user.repository';
-import { UserMapper } from '../mappers/booking.mapper';
+import {
+  FilterBookingDto,
+  SortBookingDto,
+} from '../../../../dto/query-booking.dto';
+import { Booking } from '../../../../domain/booking';
+import { BookingRepository } from '../../booking.repository';
+import { BookingMapper } from '../mappers/booking.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 
 @Injectable()
-export class UsersRelationalRepository implements UserRepository {
+export class BookingsRelationalRepository implements BookingRepository {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly usersRepository: Repository<UserEntity>,
+    @InjectRepository(BookingEntity)
+    private readonly bookingsRepository: Repository<BookingEntity>,
   ) {}
 
-  async create(data: User): Promise<User> {
-    const persistenceModel = UserMapper.toPersistence(data);
-    const newEntity = await this.usersRepository.save(
-      this.usersRepository.create(persistenceModel),
+  async create(data: Booking): Promise<Booking> {
+    const persistenceModel = BookingMapper.toPersistence(data);
+    const newEntity = await this.bookingsRepository.save(
+      this.bookingsRepository.create(persistenceModel),
     );
-    return UserMapper.toDomain(newEntity);
+    return BookingMapper.toDomain(newEntity);
   }
 
   async findManyWithPagination({
-    filterOptions,
     sortOptions,
     paginationOptions,
   }: {
-    filterOptions?: FilterUserDto | null;
-    sortOptions?: SortUserDto[] | null;
+    filterOptions?: FilterBookingDto | null;
+    sortOptions?: SortBookingDto[] | null;
     paginationOptions: IPaginationOptions;
-  }): Promise<User[]> {
-    const where: FindOptionsWhere<UserEntity> = {};
-    if (filterOptions?.roles?.length) {
-      where.role = filterOptions.roles.map((role) => ({
-        id: Number(role.id),
-      }));
-    }
+  }): Promise<Booking[]> {
+    const where: FindOptionsWhere<BookingEntity> = {};
 
-    const entities = await this.usersRepository.find({
+    const entities = await this.bookingsRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: where,
@@ -54,53 +51,27 @@ export class UsersRelationalRepository implements UserRepository {
       ),
     });
 
-    return entities.map((user) => UserMapper.toDomain(user));
+    return entities.map((booking) => BookingMapper.toDomain(booking));
   }
 
-  async findById(id: User['id']): Promise<NullableType<User>> {
-    const entity = await this.usersRepository.findOne({
+  async findById(id: Booking['id']): Promise<NullableType<Booking>> {
+    const entity = await this.bookingsRepository.findOne({
       where: { id: Number(id) },
     });
 
-    return entity ? UserMapper.toDomain(entity) : null;
+    return entity ? BookingMapper.toDomain(entity) : null;
   }
 
-  async findByIds(ids: User['id'][]): Promise<User[]> {
-    const entities = await this.usersRepository.find({
+  async findByIds(ids: Booking['id'][]): Promise<Booking[]> {
+    const entities = await this.bookingsRepository.find({
       where: { id: In(ids) },
     });
 
-    return entities.map((user) => UserMapper.toDomain(user));
+    return entities.map((booking) => BookingMapper.toDomain(booking));
   }
 
-  async findByEmail(email: User['email']): Promise<NullableType<User>> {
-    if (!email) return null;
-
-    const entity = await this.usersRepository.findOne({
-      where: { email },
-    });
-
-    return entity ? UserMapper.toDomain(entity) : null;
-  }
-
-  async findBySocialIdAndProvider({
-    socialId,
-    provider,
-  }: {
-    socialId: User['socialId'];
-    provider: User['provider'];
-  }): Promise<NullableType<User>> {
-    if (!socialId || !provider) return null;
-
-    const entity = await this.usersRepository.findOne({
-      where: { socialId, provider },
-    });
-
-    return entity ? UserMapper.toDomain(entity) : null;
-  }
-
-  async update(id: User['id'], payload: Partial<User>): Promise<User> {
-    const entity = await this.usersRepository.findOne({
+  async update(id: Booking['id'], payload: Partial<Booking>): Promise<Booking> {
+    const entity = await this.bookingsRepository.findOne({
       where: { id: Number(id) },
     });
 
@@ -108,19 +79,19 @@ export class UsersRelationalRepository implements UserRepository {
       throw new Error('User not found');
     }
 
-    const updatedEntity = await this.usersRepository.save(
-      this.usersRepository.create(
-        UserMapper.toPersistence({
-          ...UserMapper.toDomain(entity),
+    const updatedEntity = await this.bookingsRepository.save(
+      this.bookingsRepository.create(
+        BookingMapper.toPersistence({
+          ...BookingMapper.toDomain(entity),
           ...payload,
         }),
       ),
     );
 
-    return UserMapper.toDomain(updatedEntity);
+    return BookingMapper.toDomain(updatedEntity);
   }
 
-  async remove(id: User['id']): Promise<void> {
-    await this.usersRepository.softDelete(id);
+  async remove(id: Booking['id']): Promise<void> {
+    await this.bookingsRepository.softDelete(id);
   }
 }

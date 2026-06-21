@@ -12,8 +12,8 @@ import {
   HttpCode,
   SerializeOptions,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-booking.dto';
-import { UpdateUserDto } from './dto/update-booking.dto';
+import { CreateBookingDto } from './dto/create-booking.dto';
+import { UpdateBookingDto } from './dto/update-booking.dto';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -30,37 +30,37 @@ import {
   InfinityPaginationResponseDto,
 } from '../utils/dto/infinity-pagination-response.dto';
 import { NullableType } from '../utils/types/nullable.type';
-import { QueryUserDto } from './dto/query-booking.dto';
-import { User } from './domain/booking';
-import { UsersService } from './users.service';
+import { QueryBookingDto } from './dto/query-booking.dto';
+import { Booking } from './domain/booking';
+import { BookingsService } from './bookings.service';
 import { RolesGuard } from '../roles/roles.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 
 @ApiBearerAuth()
 @Roles(RoleEnum.admin)
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@ApiTags('Users')
+@ApiTags('Bookings')
 @Controller({
-  path: 'users',
+  path: 'bookings',
   version: '1',
 })
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class BookingsController {
+  constructor(private readonly bookingsService: BookingsService) {}
 
   @ApiCreatedResponse({
-    type: User,
+    type: Booking,
   })
   @SerializeOptions({
     groups: ['admin'],
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createProfileDto: CreateUserDto): Promise<User> {
-    return this.usersService.create(createProfileDto);
+  create(@Body() createBookingDto: CreateBookingDto): Promise<Booking> {
+    return this.bookingsService.create(createBookingDto);
   }
 
   @ApiOkResponse({
-    type: InfinityPaginationResponse(User),
+    type: InfinityPaginationResponse(Booking),
   })
   @SerializeOptions({
     groups: ['admin'],
@@ -68,8 +68,8 @@ export class UsersController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
-    @Query() query: QueryUserDto,
-  ): Promise<InfinityPaginationResponseDto<User>> {
+    @Query() query: QueryBookingDto,
+  ): Promise<InfinityPaginationResponseDto<Booking>> {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
     if (limit > 50) {
@@ -77,7 +77,7 @@ export class UsersController {
     }
 
     return infinityPagination(
-      await this.usersService.findManyWithPagination({
+      await this.bookingsService.findManyWithPagination({
         filterOptions: query?.filters,
         sortOptions: query?.sort,
         paginationOptions: {
@@ -90,7 +90,7 @@ export class UsersController {
   }
 
   @ApiOkResponse({
-    type: User,
+    type: Booking,
   })
   @SerializeOptions({
     groups: ['admin'],
@@ -102,12 +102,12 @@ export class UsersController {
     type: String,
     required: true,
   })
-  findOne(@Param('id') id: User['id']): Promise<NullableType<User>> {
-    return this.usersService.findById(id);
+  findOne(@Param('id') id: Booking['id']): Promise<NullableType<Booking>> {
+    return this.bookingsService.findById(id);
   }
 
   @ApiOkResponse({
-    type: User,
+    type: Booking,
   })
   @SerializeOptions({
     groups: ['admin'],
@@ -120,10 +120,10 @@ export class UsersController {
     required: true,
   })
   update(
-    @Param('id') id: User['id'],
-    @Body() updateProfileDto: UpdateUserDto,
-  ): Promise<User | null> {
-    return this.usersService.update(id, updateProfileDto);
+    @Param('id') id: Booking['id'],
+    @Body() updateBookingDto: UpdateBookingDto,
+  ): Promise<Booking | null> {
+    return this.bookingsService.update(id, updateBookingDto);
   }
 
   @Delete(':id')
@@ -133,7 +133,7 @@ export class UsersController {
     required: true,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: User['id']): Promise<void> {
-    return this.usersService.remove(id);
+  remove(@Param('id') id: Booking['id']): Promise<void> {
+    return this.bookingsService.remove(id);
   }
 }

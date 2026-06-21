@@ -7,61 +7,49 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  JoinColumn,
-  OneToOne,
 } from 'typeorm';
-import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
-import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
-import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity';
-
-import { AuthProvidersEnum } from '../../../../../auth/auth-providers.enum';
+import { BookingStatusEntity } from './booking-status.entity';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 
 @Entity({
-  name: 'user',
+  name: 'booking',
 })
-export class UserEntity extends EntityRelationalHelper {
+export class BookingEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
 
   // For "string | null" we need to use String type.
   // More info: https://github.com/typeorm/typeorm/issues/2567
   @Column({ type: String, unique: true, nullable: true })
-  email: string | null;
+  timezone: string | null;
 
   @Column({ nullable: true })
-  password?: string;
+  locationType?: string;
 
-  @Column({ default: AuthProvidersEnum.email })
-  provider: string;
+  @Column({ nullable: true })
+  locationValue: string;
 
-  @Index()
-  @Column({ type: String, nullable: true })
-  socialId?: string | null;
-
-  @Index()
-  @Column({ type: String, nullable: true })
-  firstName: string | null;
+  @Column('simple-array', { nullable: true })
+  attendants?: string[] | null;
 
   @Index()
   @Column({ type: String, nullable: true })
-  lastName: string | null;
+  organizerId?: string | null;
 
-  @OneToOne(() => FileEntity, {
+  @Index()
+  @Column({ type: String, nullable: true })
+  notes: string | null;
+
+  @ManyToOne(() => BookingStatusEntity, {
     eager: true,
   })
-  @JoinColumn()
-  photo?: FileEntity | null;
+  status?: BookingStatusEntity;
 
-  @ManyToOne(() => RoleEntity, {
-    eager: true,
-  })
-  role?: RoleEntity | null;
+  @CreateDateColumn()
+  startAt: Date;
 
-  @ManyToOne(() => StatusEntity, {
-    eager: true,
-  })
-  status?: StatusEntity;
+  @UpdateDateColumn()
+  endAt: Date;
 
   @CreateDateColumn()
   createdAt: Date;

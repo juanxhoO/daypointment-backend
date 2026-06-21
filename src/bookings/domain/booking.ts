@@ -1,4 +1,4 @@
-import { Status } from '../../statuses/domain/status';
+import { BookingStatus } from './booking-status';
 import { ApiProperty } from '@nestjs/swagger';
 
 const idType = Number;
@@ -30,25 +30,34 @@ export class Booking {
   organizerId: number | string;
 
   @ApiProperty({
-    type: [idType],
+    type: [Object],
   })
-  attendants: number[] | string[];
+  attendants: {
+    id: number | string;
+    name: string;
+    email: string;
+    [key: string]: any;
+  }[];
 
   @ApiProperty({
     type: String,
   })
   notes: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: Date,
+  })
   startAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: Date,
+  })
   endAt: Date;
 
   @ApiProperty({
-    type: () => Status,
+    type: () => BookingStatus,
   })
-  status?: Status;
+  status?: BookingStatus;
 
   @ApiProperty()
   createdAt: Date;

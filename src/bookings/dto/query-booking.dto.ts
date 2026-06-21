@@ -6,10 +6,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Transform, Type, plainToInstance } from 'class-transformer';
-import { User } from '../domain/booking';
+import { Booking } from '../domain/booking';
 import { RoleDto } from '../../roles/dto/role.dto';
 
-export class FilterUserDto {
+export class FilterBookingDto {
   @ApiPropertyOptional({ type: RoleDto })
   @IsOptional()
   @ValidateNested({ each: true })
@@ -17,18 +17,18 @@ export class FilterUserDto {
   roles?: RoleDto[] | null;
 }
 
-export class SortUserDto {
+export class SortBookingDto {
   @ApiProperty()
   @Type(() => String)
   @IsString()
-  orderBy: keyof User;
+  orderBy: keyof Booking;
 
   @ApiProperty()
   @IsString()
   order: string;
 }
 
-export class QueryUserDto {
+export class QueryBookingDto {
   @ApiPropertyOptional()
   @Transform(({ value }) => (value ? Number(value) : 1))
   @IsNumber()
@@ -44,18 +44,20 @@ export class QueryUserDto {
   @ApiPropertyOptional({ type: String })
   @IsOptional()
   @Transform(({ value }) =>
-    value ? plainToInstance(FilterUserDto, JSON.parse(value)) : undefined,
+    value ? plainToInstance(FilterBookingDto, JSON.parse(value)) : undefined,
   )
   @ValidateNested()
-  @Type(() => FilterUserDto)
-  filters?: FilterUserDto | null;
+  @Type(() => FilterBookingDto)
+  filters?: FilterBookingDto | null;
 
   @ApiPropertyOptional({ type: String })
   @IsOptional()
   @Transform(({ value }) => {
-    return value ? plainToInstance(SortUserDto, JSON.parse(value)) : undefined;
+    return value
+      ? plainToInstance(SortBookingDto, JSON.parse(value))
+      : undefined;
   })
   @ValidateNested({ each: true })
-  @Type(() => SortUserDto)
-  sort?: SortUserDto[] | null;
+  @Type(() => SortBookingDto)
+  sort?: SortBookingDto[] | null;
 }
