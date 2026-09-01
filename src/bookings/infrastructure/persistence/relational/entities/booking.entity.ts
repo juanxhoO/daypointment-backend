@@ -8,8 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { BookingStatusEntity } from './booking-status.entity';
+
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
+import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
 
 @Entity({
   name: 'booking',
@@ -40,10 +41,10 @@ export class BookingEntity extends EntityRelationalHelper {
   @Column({ type: String, nullable: true })
   notes: string | null;
 
-  @ManyToOne(() => BookingStatusEntity, {
+  @ManyToOne(() => StatusEntity, {
     eager: true,
   })
-  status?: BookingStatusEntity;
+  status?: StatusEntity;
 
   @CreateDateColumn()
   startAt: Date;

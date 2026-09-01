@@ -7,10 +7,12 @@ export class AuthRegisterLoginDto {
   @ApiProperty({ example: 'test1@example.com', type: String })
   @Transform(lowerCaseTransformer)
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @ApiProperty()
   @MinLength(6)
+  @IsNotEmpty()
   password: string;
 
   @ApiProperty({ example: 'John' })

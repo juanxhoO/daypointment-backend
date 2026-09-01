@@ -1,6 +1,6 @@
+import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
 import { Booking } from '../../../../domain/booking';
 import { BookingEntity } from '../entities/booking.entity';
-import { BookingStatusEntity } from '../entities/booking-status.entity';
 
 export class BookingMapper {
   static toDomain(raw: BookingEntity): Booking {
@@ -17,10 +17,10 @@ export class BookingMapper {
   }
 
   static toPersistence(domainEntity: Booking): BookingEntity {
-    let status: BookingStatusEntity | undefined = undefined;
+    let status: StatusEntity | undefined = undefined;
 
     if (domainEntity.status) {
-      status = new BookingStatusEntity();
+      status = new StatusEntity();
       status.id = Number(domainEntity.status.id);
     }
 
