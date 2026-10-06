@@ -1,113 +1,69 @@
 import {
-  HttpStatus,
+  // common
   Injectable,
-  UnprocessableEntityException,
 } from '@nestjs/common';
-import { CreateBookingDto } from './dto/create-booking.dto';
-import { NullableType } from '../utils/types/nullable.type';
-import { FilterBookingDto, SortBookingDto } from './dto/query-booking.dto';
-import { BookingRepository } from './infrastructure/persistence/booking.repository';
-import { Booking } from './domain/booking';
-import { BookingStatusEnum } from './booking-status.enum';
+import { CreateBookingsDto } from './dto/create-bookings.dto';
+import { UpdateBookingsDto } from './dto/update-bookings.dto';
+import { BookingsRepository } from './infrastructure/persistence/bookings.repository';
 import { IPaginationOptions } from '../utils/types/pagination-options';
-import { BookingStatus as Status } from './domain/booking-status';
-import { UpdateBookingDto } from './dto/update-booking.dto';
+import { Bookings } from './domain/bookings';
 
 @Injectable()
 export class BookingsService {
-  constructor(private readonly bookingRepository: BookingRepository) {}
+  constructor(
+    // Dependencies here
+    private readonly bookingsRepository: BookingsRepository,
+  ) {}
 
-  async create(createUserDto: CreateBookingDto): Promise<Booking> {
+  async create(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    createBookingsDto: CreateBookingsDto,
+  ) {
     // Do not remove comment below.
     // <creating-property />
 
-    let status: Status | undefined = undefined;
-
-    if (createUserDto.status?.id) {
-      const statusObject = Object.values(BookingStatusEnum)
-        .map(String)
-        .includes(String(createUserDto.status.id));
-      if (!statusObject) {
-        throw new UnprocessableEntityException({
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            status: 'statusNotExists',
-          },
-        });
-      }
-
-      status = {
-        id: createUserDto.status.id,
-      };
-    }
-
-    return this.bookingRepository.create({
+    return this.bookingsRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
-      timezone: createUserDto.timezone,
-      status: status,
-    } as any);
-  }
-
-  findManyWithPagination({
-    filterOptions,
-    sortOptions,
-    paginationOptions,
-  }: {
-    filterOptions?: FilterBookingDto | null;
-    sortOptions?: SortBookingDto[] | null;
-    paginationOptions: IPaginationOptions;
-  }): Promise<Booking[]> {
-    return this.bookingRepository.findManyWithPagination({
-      filterOptions,
-      sortOptions,
-      paginationOptions,
     });
   }
 
-  findById(id: Booking['id']): Promise<NullableType<Booking>> {
-    return this.bookingRepository.findById(id);
+  findAllWithPagination({
+    paginationOptions,
+  }: {
+    paginationOptions: IPaginationOptions;
+  }) {
+    return this.bookingsRepository.findAllWithPagination({
+      paginationOptions: {
+        page: paginationOptions.page,
+        limit: paginationOptions.limit,
+      },
+    });
   }
 
-  findByIds(ids: Booking['id'][]): Promise<Booking[]> {
-    return this.bookingRepository.findByIds(ids);
+  findById(id: Bookings['id']) {
+    return this.bookingsRepository.findById(id);
+  }
+
+  findByIds(ids: Bookings['id'][]) {
+    return this.bookingsRepository.findByIds(ids);
   }
 
   async update(
-    id: Booking['id'],
-    updateUserDto: UpdateBookingDto,
-  ): Promise<Booking | null> {
+    id: Bookings['id'],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateBookingsDto: UpdateBookingsDto,
+  ) {
     // Do not remove comment below.
     // <updating-property />
-    let status: Status | undefined = undefined;
 
-    if (updateUserDto.status?.id) {
-      const statusObject = Object.values(BookingStatusEnum)
-        .map(String)
-        .includes(String(updateUserDto.status.id));
-      if (!statusObject) {
-        throw new UnprocessableEntityException({
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            status: 'statusNotExists',
-          },
-        });
-      }
-
-      status = {
-        id: updateUserDto.status.id,
-      };
-    }
-
-    return this.bookingRepository.update(id, {
+    return this.bookingsRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
-      timezone: updateUserDto.timezone,
-      status,
-    } as any);
+    });
   }
 
-  async remove(id: Booking['id']): Promise<void> {
-    await this.bookingRepository.remove(id);
+  remove(id: Bookings['id']) {
+    return this.bookingsRepository.remove(id);
   }
 }

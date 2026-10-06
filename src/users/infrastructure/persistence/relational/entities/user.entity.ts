@@ -9,10 +9,12 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
 import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
 import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity';
+import { ApplicationsEntity } from '../../../../../applications/infrastructure/persistence/relational/entities/applications.entity';
 
 import { AuthProvidersEnum } from '../../../../../auth/auth-providers.enum';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
@@ -38,6 +40,9 @@ export class UserEntity extends EntityRelationalHelper {
   @Index()
   @Column({ type: String, nullable: true })
   socialId?: string | null;
+
+  @OneToMany(() => ApplicationsEntity, (application) => application.user)
+  applications: ApplicationsEntity[];
 
   @Index()
   @Column({ type: String, nullable: true })
