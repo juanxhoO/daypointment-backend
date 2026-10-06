@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
-import { BookingRepository } from '../booking.repository';
-import { BookingsRelationalRepository } from './repositories/booking.repository';
+import { BookingsRepository } from '../bookings.repository';
+import { BookingsRelationalRepository } from './repositories/bookings.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BookingEntity } from './entities/booking.entity';
+import { BookingsEntity } from './entities/bookings.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BookingEntity])],
+  imports: [TypeOrmModule.forFeature([BookingsEntity])],
   providers: [
     {
-      provide: BookingRepository,
+      provide: BookingsRepository,
       useClass: BookingsRelationalRepository,
     },
   ],
-  exports: [BookingRepository],
+  exports: [BookingsRepository],
 })
-export class RelationalBookingPersistenceModule {}
+export class RelationalBookingsPersistenceModule {}
