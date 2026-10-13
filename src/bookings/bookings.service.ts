@@ -15,16 +15,22 @@ export class BookingsService {
     private readonly bookingsRepository: BookingsRepository,
   ) {}
 
-  async create(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createBookingsDto: CreateBookingsDto,
-  ) {
+  async create(createBookingsDto: CreateBookingsDto) {
     // Do not remove comment below.
     // <creating-property />
 
     return this.bookingsRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      status: createBookingsDto.status,
+      name: createBookingsDto.name,
+      total: createBookingsDto.total,
+      appId: createBookingsDto.appId,
+      description: createBookingsDto.description,
+      appointmentId: createBookingsDto.appointmentId,
+      duration: createBookingsDto.duration,
+      userId: 'dsd',
+      type: createBookingsDto.type,
     });
   }
 
